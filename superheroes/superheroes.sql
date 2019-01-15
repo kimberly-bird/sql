@@ -1,124 +1,127 @@
-DELETE FROM SuperheroPower;
-DELETE FROM Power;
-DELETE FROM PowerType;
-DELETE FROM SuperheroWeakness;
-DELETE FROM Weakness;
-DELETE FROM Sidekick;
-DELETE FROM Superhero;
+DELETE FROM SuperheroPowers;
+DELETE FROM Powers;
+DELETE FROM PowerTypes;
+DELETE FROM SuperheroWeaknesses;
+DELETE FROM Weaknesses;
+DELETE FROM Sidekicks;
+DELETE FROM Superheroes;
 
-DROP TABLE IF EXISTS Superhero;
-DROP TABLE IF EXISTS Power;
-DROP TABLE IF EXISTS PowerType;
-DROP TABLE IF EXISTS SuperheroPower;
-DROP TABLE IF EXISTS Sidekick;
-DROP TABLE IF EXISTS Weakness;
-DROP TABLE IF EXISTS SuperheroWeakness;
+DROP TABLE IF EXISTS Superheroes;
+DROP TABLE IF EXISTS Powers;
+DROP TABLE IF EXISTS PowerTypes;
+DROP TABLE IF EXISTS SuperheroPowers;
+DROP TABLE IF EXISTS Sidekicks;
+DROP TABLE IF EXISTS Weaknesses;
+DROP TABLE IF EXISTS SuperheroWeaknesses;
 
 
 
-CREATE TABLE `Superhero` (
+CREATE TABLE `Superheroes` (
     `SuperheroId`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `Name`    TEXT NOT NULL,
     `Gender`    TEXT NOT NULL,
     `Secret_ID` 
 );
 
-INSERT INTO Superhero VALUES (null, 'Green Lantern', 'M', 'Green Room', 'Green');
-INSERT INTO Superhero VALUES (null, 'Wonder Woman', 'F', 'Themyscira', 'Blue, Gold, Red');
-INSERT INTO Superhero VALUES (null, 'Batman', 'M', 'Bat Cave', 'Grey');
+INSERT INTO Superheroes VALUES (null, 'Green Lantern', 'M', 'Green Room', 'Green');
+INSERT INTO Superheroes VALUES (null, 'Wonder Woman', 'F', 'Themyscira', 'Blue, Gold, Red');
+INSERT INTO Superheroes VALUES (null, 'Batman', 'M', 'Bat Cave', 'Grey');
 
-CREATE TABLE `Sidekick` (
+
+CREATE TABLE `Sidekicks` (
     `SidekickId`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `Name`    TEXT NOT NULL,
     `Gender`    TEXT NOT NULL,
     `Profession`    TEXT NOT NULL,
     `SuperheroId`    INTEGER NOT NULL,
-    FOREIGN KEY(`SuperheroId`) REFERENCES `Superhero`(`SuperheroId`)
+    FOREIGN KEY(`SuperheroId`) REFERENCES `Superheroes`(`SuperheroId`)
 );
 
-INSERT INTO Sidekick
+INSERT INTO Sidekicks
   SELECT null, 'Robin', 'M', 'Neerdowell', SuperheroId
-  FROM Superhero s
+  FROM Superheroes s
   WHERE s.Name = 'Batman';
 
 
-CREATE TABLE `PowerType` (
+CREATE TABLE `PowerTypes` (
     `PowerTypeId`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `Name`    TEXT NOT NULL
 );
 
-INSERT INTO PowerType VALUES (null, 'Physical');
-INSERT INTO PowerType VALUES (null, 'Energy');
+INSERT INTO PowerTypes VALUES (null, 'Physical');
+INSERT INTO PowerTypes VALUES (null, 'Energy');
 
 
-CREATE TABLE `Power` (
+CREATE TABLE `Powers` (
     `PowerId`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `Name`    TEXT NOT NULL,
     `PowerTypeId`    INTEGER NOT NULL,
-    FOREIGN KEY(`PowerTypeId`) REFERENCES `PowerType`(`PowerTypeId`)
+    FOREIGN KEY(`PowerTypeId`) REFERENCES `PowerTypes`(`PowerTypeId`)
 );
 
-INSERT INTO Power
+INSERT INTO Powers
   -- shortcut of sorts for adding a fk id to a table while searching for that id at the same time
   SELECT null, 'Super Strength', PowerTypeId
   FROM PowerType
   WHERE Name = 'Physical';
 
-INSERT INTO Power
+INSERT INTO Powers
   SELECT null, 'Elasticity', PowerTypeId
   FROM PowerType
   WHERE Name = 'Physical';
 
-INSERT INTO Power
+INSERT INTO Powers
   SELECT null, 'Laser Eyesight', PowerTypeId
   FROM PowerType
   WHERE Name = 'Energy';
 
-INSERT INTO Power
+INSERT INTO Powers
   SELECT null, 'Storm Power', PowerTypeId
   FROM PowerType
   WHERE Name = 'Energy';
 
-INSERT INTO Power
+INSERT INTO Powers
   SELECT null, 'Reality Manipulation', PowerTypeId
   FROM PowerType
   WHERE Name = 'Energy';
 
-CREATE TABLE `SuperheroPower` (
+
+CREATE TABLE `SuperheroPowers` (
     `SuperheroPowerId`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `SuperheroId`    INTEGER NOT NULL,
     `PowerId`    INTEGER NOT NULL,
-    FOREIGN KEY(`PowerId`) REFERENCES `Power`(`PowerId`),
-    FOREIGN KEY(`SuperheroId`) REFERENCES `Superhero`(`SuperheroId`)
+    FOREIGN KEY(`PowerId`) REFERENCES `Powers`(`PowerId`),
+    FOREIGN KEY(`SuperheroId`) REFERENCES `Superheroes`(`SuperheroId`)
 );
 
-INSERT INTO SuperheroPower
+INSERT INTO SuperheroPowers
   SELECT null, s.SuperheroId, p.PowerId
-  FROM Power p, Superhero s
+  FROM Powers p, Superheroes s
   WHERE s.Name = 'Wonder Woman' and p.Name = "Super Strength";
 
-INSERT INTO SuperheroPower
+INSERT INTO SuperheroPowers
   SELECT null, s.SuperheroId, p.PowerId
-  FROM Power p, Superhero s
+  FROM Powers p, Superheroes s
   WHERE s.Name = 'Green Lantern' and p.Name = "Reality Manipulation";
 
 
-CREATE TABLE `Weakness` (
+CREATE TABLE `Weaknesses` (
     `WeaknessId`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `Name`    TEXT NOT NULL
 );
 
-INSERT INTO Weakness VALUES (null, 'Yellow');
+INSERT INTO Weaknesses VALUES (null, 'Yellow');
 
-CREATE TABLE `SuperheroWeakness` (
+
+CREATE TABLE `SuperheroWeaknesses` (
     `SuperheroWeaknessId`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     `SuperheroId`    INTEGER NOT NULL,
     `WeaknessId`    INTEGER NOT NULL,
-    FOREIGN KEY(`WeaknessId`) REFERENCES `Weakness`(`WeaknessId`),
-    FOREIGN KEY(`SuperheroId`) REFERENCES `Superhero`(`SuperheroId`)
+    FOREIGN KEY(`WeaknessId`) REFERENCES `Weaknesses`(`WeaknessId`),
+    FOREIGN KEY(`SuperheroId`) REFERENCES `Superheroes`(`SuperheroId`)
 );
 
-INSERT INTO SuperheroWeakness
+INSERT INTO SuperheroWeaknesses
   SELECT null, s.SuperheroId, w.WeaknessId
-  FROM Weakness w, Superhero s
+  FROM Weaknesses w, Superheroes s
   WHERE s.Name = 'Green Lantern' and w.Name = "Yellow";
